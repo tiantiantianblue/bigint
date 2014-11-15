@@ -1,16 +1,125 @@
 #include"bigint.h"
+#include<algorithm>
+#include<ostream>
+#include<iterator>
 using namespace std;
 namespace tiny
 {
+	static bool operator<(const vector<int>& left,const vector<int>& right)
+	{
+		if(left.size()<right.size())
+			return true;
+		else if(left.size()>right.size())
+			return false;
+		for(int i=left.size()-1;i>=0;--i)
+		{
+			if(left[i]<right[i])
+				return true;
+			else if(left[i]>right[i])
+				return false;
+		}
+		return false;
+	}
+	static bool operator>(const vector<int>& left, const vector<int>& right)
+	{
+		return !(left<right)&&!(left==right);
+	}
+	
 	bigint::bigint(int x)
 	{
+		if(x<0)
+		{
+			postive=false;	
+			x=-x;
+		}
+		v.reserve(11);
+		while(x)
+		{
+			v.push_back(x%10);
+			x/=10;
+		}
 
 	}
 	bigint::bigint(const string& s)
 	{
-
+		if(s.empty())
+			return;
+		auto end=s.rend();
+		if(s[0]=='-')
+		{
+			postive=false;
+			--end;
+		}
+		else if(s[0]=='+')
+		{
+			--end;
+		}
+		for_each(s.rbegin(),end,[this](int i)
+				{
+				v.push_back(i-'0');
+				});
 	}
+	bigint::bigint(const char* s):bigint(string(s))
+	{
+	}
+	
+
+	ostream& operator<<(ostream& os,const bigint& self)
+	{
+		if(!self.postive)
+			os<<"-";
+		copy(self.v.rbegin(),self.v.rend(),ostream_iterator<int>(os,""));
+		return os;
+	}
+	
+	
+	//operator <, =, >for bigint
+	bool operator==(const bigint& left,const bigint& right)
+	{
+		return (left.postive==right.postive)&&(left.v==right.v);
+	}
+	bool operator<(const bigint& left,const bigint& right)
+	{
+		if(left.postive==false&&right.postive==true)
+			return true;
+		else if(left.postive==true&right.postive==true)
+			return left.v<right.v;
+		else if(left.postive==false&&right.postive==false)
+			return left.v>right.v;
+		else
+			return false;
+	}
+
+	bool operator>(const bigint& left,const bigint& right)
+	{
+		return !(left<right)&&!(left==right);
+	}
+	
+
+
 	bigint& bigint::operator+=(const bigint& other)
 	{
+		if(postive==other.postive)
+		{
+			v.resize(max(v.size(),other.v.size())+1);
+			int min_size=min(v.size(),other.v.size());
+			for(int i=0;i!=min_size;++i)
+				v[i]+=other.v[i];
+			bool flag=0;
+			for(int& x:v)
+			{
+				x+=flag;
+				if(x>=10)
+				{
+					x-=10;
+					flag=1;
+				}
+				else
+					flag=0;
+			}
+			if(0==*(v.end()-1))
+				v.pop_back();
+		}
+		return *this;
 	}
 }
