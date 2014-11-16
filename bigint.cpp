@@ -25,13 +25,6 @@ namespace tiny
 		return !(left<right)&&!(left==right);
 	}
 	
-	bigint& bigint::turn()
-	{
-		if(v.size()==1&&v[0]==0)
-			return *this;
-		postive=!postive;
-		return *this;
-	}
 	bigint::bigint(int x)
 	{
 		if(x<0)
@@ -87,6 +80,11 @@ namespace tiny
 	{
 		return (left.postive==right.postive)&&(left.v==right.v);
 	}
+	
+	bool operator!=(const bigint& left,const bigint& right)
+	{
+		return !(left==right);
+	}
 	bool operator<(const bigint& left,const bigint& right)
 	{
 		if(left.postive==false&&right.postive==true)
@@ -117,7 +115,8 @@ namespace tiny
 	const bigint operator-(const bigint& one)
 	{
 		bigint big(one);
-		big.turn();
+		if (big!=bigint(0))
+			big.postive=!big.postive;
 		return big;
 	}
 	bigint operator+(const bigint& left, const bigint& right)
@@ -166,12 +165,13 @@ namespace tiny
 	{
 		if(postive!=other.postive)
 			*this+=-other;
-		else if(postive=true&&other.postive==true)
+		else if(postive==true&&other.postive==true)
 		{
 			if(*this>=other)
 			{
 				int flag=0;
-				for(int i=0;i!=v.size();++i)
+				int i=0;
+				for(;i!=other.v.size();++i)
 				{
 					v[i]=v[i]+flag-other.v[i];
 					if(v[i]<0)
@@ -182,10 +182,21 @@ namespace tiny
 					else
 						flag=0;
 				}
+				for(;i!=v.size();++i)
+				{
+					v[i]+=flag;
+					if(v[i]<0)
+					{
+						v[i]+=10;
+						flag=-1;
+					}
+					else
+						break;
+				}
 			}
 			else
 			{
-				*this=(other-*this).turn();
+				*this=-(other-*this);
 			}
 			//remove the front's zeros
 			auto it_not_zero=find_if_not(v.rbegin(),v.rend(),[](int x)
@@ -199,7 +210,7 @@ namespace tiny
 		}
 		else
 		{
-			*this=-other-(this->turn());
+			*this=-other-(-*this);
 		}
 		if(v.empty())
 			v.push_back(0);
