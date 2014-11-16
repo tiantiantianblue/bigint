@@ -25,6 +25,13 @@ namespace tiny
 		return !(left<right)&&!(left==right);
 	}
 	
+	bigint& bigint::turn()
+	{
+		if(v.size()==1&&v[0]==0)
+			return *this;
+		postive=!postive;
+		return *this;
+	}
 	bigint::bigint(int x)
 	{
 		if(x<0)
@@ -33,17 +40,19 @@ namespace tiny
 			x=-x;
 		}
 		v.reserve(11);
-		while(x)
+		do
 		{
 			v.push_back(x%10);
 			x/=10;
-		}
-
+		}while(x);
 	}
 	bigint::bigint(const string& s)
 	{
 		if(s.empty())
+		{
+			v.push_back(0);
 			return;
+		}
 		auto end=s.rend();
 		if(s[0]=='-')
 		{
@@ -95,8 +104,34 @@ namespace tiny
 		return !(left<right)&&!(left==right);
 	}
 	
+	bool operator<=(const bigint& left,const bigint& right)
+	{
+		return (left<right)||(left==right);
+	}
 
-
+	
+	bool operator>=(const bigint& left,const bigint& right)
+	{
+		return (left>right)||(left==right);
+	}
+	const bigint operator-(const bigint& one)
+	{
+		bigint big(one);
+		big.turn();
+		return big;
+	}
+	bigint operator+(const bigint& left, const bigint& right)
+	{
+		bigint one=left;
+		one+=right;
+		return one;
+	}
+	bigint operator-(const bigint& left, const bigint& right)
+	{
+		bigint one=left;
+		one-=right;
+		return one;
+	}
 	bigint& bigint::operator+=(const bigint& other)
 	{
 		if(postive==other.postive)
@@ -120,6 +155,54 @@ namespace tiny
 			if(0==*(v.end()-1))
 				v.pop_back();
 		}
+		else if(postive==true&&other.postive==false)
+			*this-=-other;
+		else
+			*this=-(other-*this);
+		return *this;
+	}
+
+	bigint& bigint::operator-=(const bigint& other)
+	{
+		if(postive!=other.postive)
+			*this+=-other;
+		else if(postive=true&&other.postive==true)
+		{
+			if(*this>=other)
+			{
+				int flag=0;
+				for(int i=0;i!=v.size();++i)
+				{
+					v[i]=v[i]+flag-other.v[i];
+					if(v[i]<0)
+					{
+						v[i]+=10;
+						flag=-1;
+					}
+					else
+						flag=0;
+				}
+			}
+			else
+			{
+				*this=(other-*this).turn();
+			}
+			//remove the front's zeros
+			auto it_not_zero=find_if_not(v.rbegin(),v.rend(),[](int x)
+				{
+					return x==0;
+				});
+			for(auto it=v.rbegin();it!=it_not_zero;++it)
+			{
+				v.pop_back();
+			}
+		}
+		else
+		{
+			*this=-other-(this->turn());
+		}
+		if(v.empty())
+			v.push_back(0);
 		return *this;
 	}
 }
