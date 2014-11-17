@@ -1,0 +1,3 @@
+it's a bigint class which supports plus minus mul operator for integer whose size is only limited by memory.
+it does not check the validity of input, so you should take care of input by yourself.
+now it's implemented by vector<int>.
