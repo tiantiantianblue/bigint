@@ -1,3 +1,6 @@
+#ifndef BIGINT_H
+#define BIGINT_H
+
 #include<vector>
 #include<string>
 #include<iosfwd>
@@ -17,7 +20,7 @@ namespace tiny
 		friend bool operator<(const bigint&, const bigint&);
 		friend const bigint operator-(const bigint& one);	
 		friend std::ostream& operator<<(std::ostream& os, const bigint& self);
-	private:
+	//private:
 		std::vector<int> v;
 		bool postive=true;
 	};
@@ -43,3 +46,4 @@ namespace tiny
 		return one;
 	}
 }
+#endif
