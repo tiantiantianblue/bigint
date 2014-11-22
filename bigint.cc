@@ -124,8 +124,8 @@ namespace tiny
 	{
 		if(postive==other.postive)
 		{
-			v.resize(max(v.size(),other.v.size())+1);
-			int min_size=min(v.size(),other.v.size());
+			v.resize(max(size(),other.size())+1);
+			int min_size=min(size(),other.size());
 			for(int i=0;i!=min_size;++i)
 				v[i]+=other.v[i];
 			bool flag=0;
@@ -160,7 +160,7 @@ namespace tiny
 			{
 				int flag=0;
 				vector<int>::size_type i=0;
-				for(;i!=other.v.size();++i)
+				for(;i!=other.size();++i)
 				{
 					v[i]=v[i]+flag-other.v[i];
 					if(v[i]<0)
@@ -171,7 +171,7 @@ namespace tiny
 					else
 						flag=0;
 				}
-				for(;i!=v.size();++i)
+				for(;i!=size();++i)
 				{
 					v[i]+=flag;
 					if(v[i]<0)
@@ -216,9 +216,10 @@ namespace tiny
 	{
 		if(left==0||right==0)
 			return 0;
-		auto m=left.v.size();
-		auto n=right.v.size();
-		bigint one=0;
+		auto m=left.size();
+		auto n=right.size();
+		bigint one = 0;
+		one.postive = (left.postive==right.postive);
 		one.v.resize(m+n);
 		for(decltype(m) i=0;i!=m;++i)
 			for(decltype(n) j=0;j!=n;++j)
@@ -234,7 +235,40 @@ namespace tiny
 		}
 		if(*(one.v.end()-1)==0)
 			one.v.pop_back();
-		one.postive=(left.postive==right.postive);
+		return one;
+	}
+
+	const bigint operator/(const bigint& left, const bigint& right)
+	{
+		if(right == 0)
+			throw runtime_error("devide 0");
+		bigint left_ = (left<0) ? -left : left;
+		bigint right_ = (right<0) ? -right : right;
+		if(left_ < right_)
+			return 0;
+		bigint one = 0;
+		one.v.pop_back();
+		one.postive = (left.postive==right.postive);
+		int size = left.size() - right.size();
+
+		while(size >= 0)
+		{
+			for(int i=9; i>=0; --i)
+			{
+				bigint temp = right_<<size;
+				if(temp*i <= left_)
+				{
+					left_ -= temp*i;
+					one.v.push_back(i);
+					break;
+				}
+			}
+			--size;
+		}
+
+		reverse(one.v.begin(), one.v.end());
+		if(*(one.v.end()-1) == 0)
+			one.v.pop_back();
 		return one;
 	}
 }
