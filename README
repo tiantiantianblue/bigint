@@ -1,3 +1,4 @@
-it's a bigint class which supports plus minus mul operator for integer whose size is only limited by memory.
+it's a bigint class which supports operator+-*/% for integer whose size is only limited by memory.
+bigint has two kinds of construtors, the first kind receive ints(int, long, long long) , the second kind receive std::string and c-style string.
 it does not check the validity of input, so you should take care of input by yourself.
 now it's implemented by vector<int>.

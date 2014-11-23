@@ -1,5 +1,7 @@
 #include"bigint.h"
-#include<everything>
+#include<string>
+#include<iostream>
+using namespace std;
 using namespace tiny;
 int main()
 {
@@ -13,6 +15,10 @@ int main()
 		cout<<bigint(a)-b<<endl;
 		cout<<b-bigint(a)<<endl;
 		cout<<bigint(a)*b<<endl;
-		cout<<a*bigint(b)<<endl;
+		cout<<b*bigint(a)<<endl;
+		cout<<bigint(a)/b<<endl;
+		cout<<b/bigint(a)<<endl;
+		cout<<bigint(a)%b<<endl;
+		cout<<b%bigint(a)<<endl;
 	}
 }

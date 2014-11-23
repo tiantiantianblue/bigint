@@ -25,7 +25,7 @@ namespace tiny
 		return !(left<right)&&!(left==right);
 	}
 	
-	bigint::bigint(int x)
+	bigint::bigint(long long x)
 	{
 		if(x<0)
 		{
@@ -39,6 +39,15 @@ namespace tiny
 			x/=10;
 		}while(x);
 	}
+	
+	bigint::bigint(int x):bigint(static_cast<long long>(x))
+	{
+	}
+
+	bigint::bigint(long x):bigint(static_cast<long long>(x))
+	{
+	}
+
 	bigint::bigint(const string& s)
 	{
 		if(s.empty())
@@ -61,6 +70,7 @@ namespace tiny
 				v.push_back(i-'0');
 				});
 	}
+
 	bigint::bigint(const char* s):bigint(string(s))
 	{
 	}
@@ -270,5 +280,17 @@ namespace tiny
 		if(*(one.v.end()-1) == 0)
 			one.v.pop_back();
 		return one;
+	}
+
+	bigint& bigint::operator/=(const bigint& other)
+	{
+		*this = *this / other;
+		return *this;
+	}
+
+	bigint& bigint::operator%=(const bigint& other)
+	{
+		*this = *this % other;
+		return *this;
 	}
 }

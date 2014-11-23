@@ -9,12 +9,18 @@ namespace tiny
 	class bigint
 	{
 	public:
-		bigint(int x);
+		bigint(int x=0);
+		bigint(long x);
+		bigint(long long x);
 		bigint(const std::string& s);
 		bigint(const char* s);
+
 		bigint& operator+=(const bigint& other);
 		bigint& operator-=(const bigint& other);
 		bigint& operator*=(const bigint& other);
+		bigint& operator/=(const bigint& other);
+		bigint& operator%=(const bigint& other);
+
 		friend const bigint operator*(const bigint& left, const bigint& right);
 		friend const bigint operator/(const bigint& left, const bigint& right);
 		friend bool operator==(const bigint&, const bigint&);
@@ -22,6 +28,7 @@ namespace tiny
 		friend const bigint operator-(const bigint& one);	
 		friend std::ostream& operator<<(std::ostream& os, const bigint& self);
 		inline unsigned size() const;
+
 	private:
 		friend const bigint operator<<(const bigint& one, unsigned size)
 		{
@@ -45,6 +52,7 @@ namespace tiny
 	bool operator>=(const bigint&, const bigint&);
 	inline const bigint operator+(const bigint& left, const bigint& right);
 	inline const bigint operator-(const bigint& left, const bigint& right);
+	inline const bigint operator%(const bigint& left, const bigint& right);
 
 	inline const bigint operator+(const bigint& left, const bigint& right)
 	{
@@ -63,6 +71,11 @@ namespace tiny
 	inline unsigned bigint::size() const
 	{
 		return v.size();
+	}
+
+	inline const bigint operator%(const bigint& left, const bigint& right)
+	{
+		return left - left / right * right;
 	}
 }
 #endif
